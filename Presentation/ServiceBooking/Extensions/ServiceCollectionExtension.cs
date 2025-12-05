@@ -44,7 +44,7 @@ namespace ServiceBooking.WebApi.Extensions
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "PetCareService", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "BookingService", Version = "v1" });
             });
 
             services.AddHttpClient();

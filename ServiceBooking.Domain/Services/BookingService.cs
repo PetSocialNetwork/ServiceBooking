@@ -1,6 +1,7 @@
 ﻿using ServiceBooking.Domain.Entities;
 using ServiceBooking.Domain.Exceptions;
 using ServiceBooking.Domain.Interfaces;
+using System.Threading;
 
 namespace ServiceBooking.Domain.Services
 {
@@ -17,6 +18,13 @@ namespace ServiceBooking.Domain.Services
         {
             return await _uow.SlotRepository
                 .GetAvailableSlotsByServiceIdAsync(serviceId, cancellationToken);
+        }
+
+        public async Task<bool> IsBusySlotsExistsAsync
+            (Guid serviceId, CancellationToken cancellationToken)
+        {
+            return await _uow.SlotRepository
+                .IsBusySlotsExistsAsync(serviceId, cancellationToken);
         }
 
         public async Task AddBookingAsync(Booking booking, CancellationToken cancellationToken)
@@ -43,10 +51,15 @@ namespace ServiceBooking.Domain.Services
             }
         }
 
-        public async Task UpdateSlotsAsync
-            (List<Slot> newSlots, CancellationToken cancellationToken)
+        public async Task DeleteAllSlotsForServiceAsync(Guid serviceId, CancellationToken cancellationToken)
         {
-            var serviceId = newSlots.Select(s => s.ServiceId).FirstOrDefault();
+            await _uow.SlotRepository.DeleteAllStoltsByServiceIdAsync(serviceId, cancellationToken);
+            await _uow.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task UpdateSlotsAsync
+            (Guid serviceId, List<Slot> newSlots, CancellationToken cancellationToken)
+        {
             var slots = await _uow.SlotRepository
                 .GetAvailableSlotsByServiceIdAsync(serviceId, cancellationToken);
             var newSlotDates = newSlots.Select(x => x.SlotDateTime).ToList();

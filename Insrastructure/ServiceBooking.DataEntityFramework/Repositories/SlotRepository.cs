@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ServiceBooking.Domain.Entities;
 using ServiceBooking.Domain.Interfaces;
+using System;
 
 namespace ServiceBooking.DataEntityFramework.Repositories
 {
@@ -14,6 +15,20 @@ namespace ServiceBooking.DataEntityFramework.Repositories
             return await Entities
                 .Where(s => s.ServiceId == serviceId && s.IsAvailable)
                 .ToListAsync(cancellationToken);
+        }
+
+        public async Task<bool> IsBusySlotsExistsAsync
+            (Guid serviceId, CancellationToken cancellationToken)
+        {
+            return await Entities
+                .AnyAsync(s => s.ServiceId == serviceId && !s.IsAvailable, cancellationToken);
+        }
+
+        public async Task DeleteAllStoltsByServiceIdAsync(Guid serviceId, CancellationToken cancellationToken)
+        {
+            var slots = await Entities.Where(s => s.ServiceId == serviceId)
+                .ToListAsync(cancellationToken);
+            Entities.RemoveRange(slots);
         }
     }
 }

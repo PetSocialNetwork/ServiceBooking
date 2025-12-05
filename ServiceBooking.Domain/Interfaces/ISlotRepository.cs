@@ -6,5 +6,9 @@ namespace ServiceBooking.Domain.Interfaces
     {
         Task<List<Slot>> GetAvailableSlotsByServiceIdAsync
             (Guid serviceId, CancellationToken cancellationToken);
+        Task<bool> IsBusySlotsExistsAsync
+            (Guid serviceId, CancellationToken cancellationToken);
+        Task DeleteAllStoltsByServiceIdAsync
+            (Guid serviceId, CancellationToken cancellationToken);
     }
 }

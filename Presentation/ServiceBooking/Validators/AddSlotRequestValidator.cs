@@ -7,10 +7,6 @@ namespace ServiceBooking.WebApi.Validators
     {
         public AddSlotRequestValidator()
         {
-            RuleFor(x => x.ServiceId)
-                .NotEmpty()
-                .WithMessage("ServiceId не заполнен.");
-
             RuleFor(x => x.SlotDateTime)
                 .NotEmpty()
                 .WithMessage("Дата и время слота обязательны.")

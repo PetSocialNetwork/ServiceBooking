@@ -13,7 +13,7 @@ namespace ServiceBooking.WebApi.Controllers
     {
         private readonly BookingService _bookingService;
         private readonly IMapper _mapper;
-        public BookingController(BookingService bookingService, 
+        public BookingController(BookingService bookingService,
             IMapper mapper)
         {
             _bookingService = bookingService
@@ -39,6 +39,21 @@ namespace ServiceBooking.WebApi.Controllers
         }
 
         /// <summary>
+        /// Проверяет есть ли занятые даты по идентификатору услуги
+        /// </summary>
+        /// <param name="serviceId">Идентификатор услуги</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpGet("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<bool> IsBusySlotsExistsAsync
+            ([FromQuery] Guid serviceId, CancellationToken cancellationToken)
+        {
+            return await _bookingService
+                .IsBusySlotsExistsAsync(serviceId, cancellationToken);
+        }
+
+        /// <summary>
         /// Добавляет бронирование
         /// </summary>
         /// <param name="request">Модель запроса</param>
@@ -55,18 +70,32 @@ namespace ServiceBooking.WebApi.Controllers
         }
 
         /// <summary>
-        /// Добавляет свобдные слоьы, удаляет ненужные 
+        /// Добавляет свобдные слоты, удаляет ненужные 
         /// </summary>
         /// <param name="request">Модель запроса</param>
         /// <param name="cancellationToken">Токен отмены</param>
         [HttpPost("[action]")]
         [ProducesResponseType(200)]
         [ProducesResponseType(500)]
-        public async Task UpdateSlotsAsync
-            ([FromBody] List<AddSlotRequest> request, CancellationToken cancellationToken)
+        public async Task UpdateSlotsAsync(
+            [FromQuery] Guid serviceId,
+            [FromBody] List<AddSlotRequest> request,
+            CancellationToken cancellationToken)
         {
-            var slots = _mapper.Map<List<Slot>>(request);
-            await _bookingService.UpdateSlotsAsync(slots, cancellationToken);     
+            if (request.Count == 0)
+            {
+                await _bookingService.DeleteAllSlotsForServiceAsync(serviceId, cancellationToken);
+                return;
+            }
+
+            var slots = _mapper.Map<List<Slot>>(request)
+            .Select(slot =>
+            {
+                slot.ServiceId = serviceId;
+                return slot;
+            })
+            .ToList();
+            await _bookingService.UpdateSlotsAsync(serviceId, slots, cancellationToken);
         }
     }
 }

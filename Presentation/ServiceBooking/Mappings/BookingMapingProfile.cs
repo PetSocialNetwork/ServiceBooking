@@ -21,8 +21,8 @@ namespace ServiceBooking.WebApi.Mappings
 
             CreateMap<AddSlotRequest, Slot>()
                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-               .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
                .ForMember(dest => dest.SlotDateTime, opt => opt.MapFrom(src => src.SlotDateTime))
+               .ForMember(dest => dest.ServiceId, opt => opt.Ignore())
                .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => true))
                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
         }
