@@ -25,6 +25,8 @@ namespace ServiceBooking.WebApi.Mappings
                .ForMember(dest => dest.ServiceId, opt => opt.Ignore())
                .ForMember(dest => dest.IsAvailable, opt => opt.MapFrom(src => true))
                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+            
+            CreateMap<Booking, BookingResponse>();
         }
     }
 }

@@ -4,6 +4,7 @@ using ServiceBooking.Domain.Entities;
 using ServiceBooking.Domain.Services;
 using ServiceBooking.WebApi.Models.Requests;
 using ServiceBooking.WebApi.Models.Responses;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace ServiceBooking.WebApi.Controllers
 {
@@ -51,6 +52,53 @@ namespace ServiceBooking.WebApi.Controllers
         {
             return await _bookingService
                 .IsBusySlotsExistsAsync(serviceId, cancellationToken);
+        }
+
+        /// <summary>
+        /// Возвращает все бронирования по идентификатору услуги
+        /// </summary>
+        /// <param name="serviceId">Идентификатор услуги</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpGet("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IEnumerable<BookingResponse>> GetBookingsByServiceIdAsync
+            ([FromQuery] Guid serviceId, CancellationToken cancellationToken)
+        {
+            var bookings = await _bookingService
+                .GetBookingsByServiceIdAsync(serviceId, cancellationToken);
+            return _mapper.Map<List<BookingResponse>>(bookings);
+        }
+
+        /// <summary>
+        /// Возвращает все бронирования по профилю пользователя
+        /// </summary>
+        /// <param name="profileId">Идентификатор пользователя</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpGet("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task<IEnumerable<BookingResponse>> GetBookingsByProfileIdAsync
+            ([FromQuery] Guid profileId, CancellationToken cancellationToken)
+        {
+            var bookings = await _bookingService
+                .GetBookingsByProfileIdAsync(profileId, cancellationToken);
+            return _mapper.Map<List<BookingResponse>>(bookings);
+        }
+
+        /// <summary>
+        /// Обновляет статус бронирования
+        /// </summary>
+        /// <param name="request">Модель запроса</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpPost("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task UpdateBookingStatusAsync
+            ([FromBody] UpdateBookingStatusRequest request, CancellationToken cancellationToken)
+        {
+            await _bookingService.UpdateBookingStatusAsync
+                (request.BookingId, request.Status, cancellationToken);
         }
 
         /// <summary>

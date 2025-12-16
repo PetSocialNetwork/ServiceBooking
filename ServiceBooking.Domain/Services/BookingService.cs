@@ -1,4 +1,5 @@
 ﻿using ServiceBooking.Domain.Entities;
+using ServiceBooking.Domain.Entities.Enums;
 using ServiceBooking.Domain.Exceptions;
 using ServiceBooking.Domain.Interfaces;
 using System.Threading;
@@ -25,6 +26,29 @@ namespace ServiceBooking.Domain.Services
         {
             return await _uow.SlotRepository
                 .IsBusySlotsExistsAsync(serviceId, cancellationToken);
+        }
+
+        public async Task<IEnumerable<Booking>> GetBookingsByServiceIdAsync
+          (Guid serviceId, CancellationToken cancellationToken)
+        {
+            return await _uow.BookingRepository
+                .GetBookingsByServiceId(serviceId, cancellationToken);
+        }
+
+        public async Task<IEnumerable<Booking>> GetBookingsByProfileIdAsync
+         (Guid profileId, CancellationToken cancellationToken)
+        {
+            return await _uow.BookingRepository
+                .GetBookingsByProfileId(profileId, cancellationToken);
+        }
+
+        public async Task UpdateBookingStatusAsync
+          (Guid bookingId, BookingStatus status, CancellationToken cancellationToken)
+        {
+            var booking =  await _uow.BookingRepository
+                .GetById(bookingId, cancellationToken);
+            booking.Status = status;
+            await _uow.BookingRepository.Update(booking, cancellationToken);
         }
 
         public async Task AddBookingAsync(Booking booking, CancellationToken cancellationToken)
