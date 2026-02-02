@@ -10,7 +10,10 @@ namespace ServiceBooking.DataEntityFramework.Repositories
 
         public async Task<IEnumerable<Booking>> GetBookingsByServiceId(Guid serviceId, CancellationToken cancellationToken)
         {
-            return await Entities.Where(s => s.ServiceId == serviceId).ToListAsync(cancellationToken);
+            return await Entities
+                .Where(s => s.ServiceId == serviceId)
+                .OrderByDescending(s => s.BookedAt)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<IEnumerable<Booking>> GetBookingsByProfileId(Guid profileId, CancellationToken cancellationToken)

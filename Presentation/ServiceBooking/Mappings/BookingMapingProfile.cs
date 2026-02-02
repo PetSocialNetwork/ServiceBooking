@@ -14,6 +14,7 @@ namespace ServiceBooking.WebApi.Mappings
             CreateMap<AddBookingRequest, Booking>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
                 .ForMember(dest => dest.SlotId, opt => opt.MapFrom(src => src.SlotId))
+                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address))
                 .ForMember(dest => dest.ServiceId, opt => opt.MapFrom(src => src.ServiceId))
                 .ForMember(dest => dest.ProfileId, opt => opt.MapFrom(src => src.ProfileId))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => BookingStatus.Pending))

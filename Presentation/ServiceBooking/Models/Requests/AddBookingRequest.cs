@@ -7,5 +7,6 @@ namespace ServiceBooking.WebApi.Models.Requests
         public Guid SlotId { get; set; }
         public Guid ServiceId { get; set; }
         public Guid ProfileId { get; set; }
+        public string Address { get; set; }
     }
 }

@@ -54,6 +54,11 @@ namespace ServiceBooking.WebApi.Controllers
                 .IsBusySlotsExistsAsync(serviceId, cancellationToken);
         }
 
+
+
+
+
+
         /// <summary>
         /// Возвращает все бронирования по идентификатору услуги
         /// </summary>
@@ -87,21 +92,6 @@ namespace ServiceBooking.WebApi.Controllers
         }
 
         /// <summary>
-        /// Обновляет статус бронирования
-        /// </summary>
-        /// <param name="request">Модель запроса</param>
-        /// <param name="cancellationToken">Токен отмены</param>
-        [HttpPost("[action]")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(500)]
-        public async Task UpdateBookingStatusAsync
-            ([FromBody] UpdateBookingStatusRequest request, CancellationToken cancellationToken)
-        {
-            await _bookingService.UpdateBookingStatusAsync
-                (request.BookingId, request.Status, cancellationToken);
-        }
-
-        /// <summary>
         /// Добавляет бронирование
         /// </summary>
         /// <param name="request">Модель запроса</param>
@@ -115,6 +105,28 @@ namespace ServiceBooking.WebApi.Controllers
         {
             var booking = _mapper.Map<Booking>(request);
             await _bookingService.AddBookingAsync(booking, cancellationToken);
+        }
+
+
+
+
+
+
+
+
+        /// <summary>
+        /// Обновляет статус бронирования
+        /// </summary>
+        /// <param name="request">Модель запроса</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpPost("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task UpdateBookingStatusAsync
+            ([FromBody] UpdateBookingStatusRequest request, CancellationToken cancellationToken)
+        {
+            await _bookingService.UpdateBookingStatusAsync
+                (request.BookingId, request.Status, cancellationToken);
         }
 
         /// <summary>

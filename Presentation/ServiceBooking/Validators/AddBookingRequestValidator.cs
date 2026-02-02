@@ -18,6 +18,10 @@ namespace ServiceBooking.WebApi.Validators
             RuleFor(x => x.SlotId)
                 .NotEmpty()
                 .WithMessage("SlotId не заполнен.");
+
+            RuleFor(x => x.Address)
+                .NotEmpty()
+                .WithMessage("Address не заполнен.");
         }
     }
 }

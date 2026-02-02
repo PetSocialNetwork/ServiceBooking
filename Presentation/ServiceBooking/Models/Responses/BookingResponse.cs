@@ -8,6 +8,7 @@ namespace ServiceBooking.WebApi.Models.Responses
         public Guid SlotId { get; set; }
         public Guid ServiceId { get; set; }
         public Guid ProfileId { get; set; }
+        public string Address { get; set; }
         public BookingStatus Status { get; set; }
         public DateTime BookedAt { get; set; }
     }
