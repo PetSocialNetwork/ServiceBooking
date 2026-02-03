@@ -4,7 +4,6 @@ using ServiceBooking.Domain.Entities;
 using ServiceBooking.Domain.Services;
 using ServiceBooking.WebApi.Models.Requests;
 using ServiceBooking.WebApi.Models.Responses;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace ServiceBooking.WebApi.Controllers
 {
@@ -40,6 +39,20 @@ namespace ServiceBooking.WebApi.Controllers
         }
 
         /// <summary>
+        /// Удаляет все свободные даты по идентификатору услуги
+        /// </summary>
+        /// <param name="serviceId">Идентификатор услуги</param>
+        /// <param name="cancellationToken">Токен отмены</param>
+        [HttpDelete("[action]")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
+        public async Task DeleteSlotsByServiceIdAsync
+            ([FromQuery] Guid serviceId, CancellationToken cancellationToken)
+        {
+            await _bookingService.DeleteAllSlotsForServiceAsync(serviceId, cancellationToken);
+        }
+
+        /// <summary>
         /// Проверяет есть ли занятые даты по идентификатору услуги
         /// </summary>
         /// <param name="serviceId">Идентификатор услуги</param>
@@ -53,11 +66,6 @@ namespace ServiceBooking.WebApi.Controllers
             return await _bookingService
                 .IsBusySlotsExistsAsync(serviceId, cancellationToken);
         }
-
-
-
-
-
 
         /// <summary>
         /// Возвращает все бронирования по идентификатору услуги
@@ -106,13 +114,6 @@ namespace ServiceBooking.WebApi.Controllers
             var booking = _mapper.Map<Booking>(request);
             await _bookingService.AddBookingAsync(booking, cancellationToken);
         }
-
-
-
-
-
-
-
 
         /// <summary>
         /// Обновляет статус бронирования
