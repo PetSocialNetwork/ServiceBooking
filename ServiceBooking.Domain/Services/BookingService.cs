@@ -2,7 +2,6 @@
 using ServiceBooking.Domain.Entities.Enums;
 using ServiceBooking.Domain.Exceptions;
 using ServiceBooking.Domain.Interfaces;
-using System.Threading;
 
 namespace ServiceBooking.Domain.Services
 {
@@ -45,11 +44,33 @@ namespace ServiceBooking.Domain.Services
         public async Task UpdateBookingStatusAsync
           (Guid bookingId, BookingStatus status, CancellationToken cancellationToken)
         {
-            var booking =  await _uow.BookingRepository
+            var booking = await _uow.BookingRepository
                 .GetById(bookingId, cancellationToken);
             booking.Status = status;
             await _uow.BookingRepository.Update(booking, cancellationToken);
         }
+
+        public async Task DeleteBookingAsync
+         (Guid bookingId, CancellationToken cancellationToken)
+        {
+            var booking = await _uow.BookingRepository
+                .FindBookingById(bookingId, cancellationToken)
+                ?? throw new BookingNotFoundException("Бронирование не найдено.");
+            
+            if (booking.Status == BookingStatus.Confirmed)
+            {
+                throw new BookingInvalidDeleteException
+                    ($"Невозможно удалить бронирование со статусом {booking.Status}");
+            }
+
+            var slot = await _uow.SlotRepository
+                .GetById(booking.SlotId, cancellationToken);
+
+            slot.IsAvailable = true;
+            await _uow.BookingRepository.Delete(booking, cancellationToken);
+            await _uow.SaveChangesAsync(cancellationToken);
+        }
+
 
         public async Task AddBookingAsync(Booking booking, CancellationToken cancellationToken)
         {

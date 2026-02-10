@@ -20,5 +20,12 @@ namespace ServiceBooking.DataEntityFramework.Repositories
         {
             return await Entities.Where(s => s.ProfileId == profileId).ToListAsync(cancellationToken);
         }
+
+        public async Task<Booking?> FindBookingById(Guid bookingId, CancellationToken cancellationToken)
+        {
+            return await Entities
+               .Where(s => s.Id == bookingId)
+               .FirstOrDefaultAsync(cancellationToken);
+        }
     }
 }
