@@ -13,7 +13,7 @@ namespace ServiceBooking.DataEntityFramework.Repositories
             (Guid serviceId, CancellationToken cancellationToken)
         {
             return await Entities
-                .Where(s => s.ServiceId == serviceId && s.IsAvailable)
+                .Where(s => s.ServiceId == serviceId && s.IsAvailable && s.SlotDateTime >= DateTime.UtcNow)
                 .ToListAsync(cancellationToken);
         }
 

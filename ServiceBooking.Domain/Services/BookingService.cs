@@ -47,6 +47,19 @@ namespace ServiceBooking.Domain.Services
             var booking = await _uow.BookingRepository
                 .GetById(bookingId, cancellationToken);
             booking.Status = status;
+
+            var slot = await _uow.SlotRepository
+                .GetById(booking.SlotId, cancellationToken);
+
+            if (status == BookingStatus.Cancelled)
+            {
+                if (slot.SlotDateTime >= DateTime.UtcNow)
+                {
+                    slot.IsAvailable = true;
+                    await _uow.SaveChangesAsync(cancellationToken);
+                }
+            }
+
             await _uow.BookingRepository.Update(booking, cancellationToken);
         }
 
@@ -56,7 +69,7 @@ namespace ServiceBooking.Domain.Services
             var booking = await _uow.BookingRepository
                 .FindBookingById(bookingId, cancellationToken)
                 ?? throw new BookingNotFoundException("Бронирование не найдено.");
-            
+
             if (booking.Status == BookingStatus.Confirmed)
             {
                 throw new BookingInvalidDeleteException
@@ -66,11 +79,18 @@ namespace ServiceBooking.Domain.Services
             var slot = await _uow.SlotRepository
                 .GetById(booking.SlotId, cancellationToken);
 
-            slot.IsAvailable = true;
-            await _uow.BookingRepository.Delete(booking, cancellationToken);
-            await _uow.SaveChangesAsync(cancellationToken);
+            if (slot.SlotDateTime >= DateTime.UtcNow)
+            {
+                slot.IsAvailable = true;
+                await _uow.BookingRepository.Delete(booking, cancellationToken);
+                await _uow.SaveChangesAsync(cancellationToken);
+            }
+            else
+            {
+                await _uow.BookingRepository.Delete(booking, cancellationToken);
+                await _uow.SlotRepository.Delete(slot, cancellationToken);
+            }
         }
-
 
         public async Task AddBookingAsync(Booking booking, CancellationToken cancellationToken)
         {

@@ -6,6 +6,7 @@ namespace ServiceBooking.WebApi.Models.Responses
     {
         public Guid Id { get; init; }
         public Guid SlotId { get; set; }
+        public SlotReponse Slot { get; set; }  
         public Guid ServiceId { get; set; }
         public Guid ProfileId { get; set; }
         public string Address { get; set; }

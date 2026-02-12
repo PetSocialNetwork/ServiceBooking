@@ -37,7 +37,7 @@ namespace ServiceBooking.WebApi.Extensions
             services.AddValidatorsFromAssemblyContaining<Program>();
             services.AddControllers(options =>
             {
-                options.Filters.Add<CentralizedExceptionHandlingFilter>();
+                //options.Filters.Add<CentralizedExceptionHandlingFilter>();
             });
 
             services.AddFluentValidationAutoValidation();

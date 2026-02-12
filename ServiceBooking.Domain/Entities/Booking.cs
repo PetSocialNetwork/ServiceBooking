@@ -6,7 +6,8 @@ namespace ServiceBooking.Domain.Entities
     public class Booking : IEntity
     {
         public Guid Id { get; init; }
-        public Guid SlotId { get; set; } 
+        public Guid SlotId { get; set; }
+        public Slot Slot { get; set; }
         public Guid ServiceId { get; set; }
         public Guid ProfileId { get; set; }
         public string Address { get; set; }
